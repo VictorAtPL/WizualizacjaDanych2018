@@ -1,4 +1,6 @@
 library(ggplot2)
+install.packages("ggplot2")
+install.packages("SmarterPoland")
 library(SmarterPoland)
 library(dplyr)
 
@@ -58,6 +60,7 @@ p2 <- ggplot(countries, aes(x = continent, y = death.rate)) +
   geom_violin()
 
 library(gridExtra)
+install.packages("gridExtra")
 grid.arrange(p1, p2, nrow = 1)
 
 
@@ -68,9 +71,10 @@ ggplot(data = countries, aes(x = continent, y = death.rate)) +
   geom_point()
 
 set.seed(15390)
+
 ggplot(data = countries, aes(x = continent, y = death.rate)) +
   geom_point(position = "jitter") +
-  geom_boxplot(outlier.color = NA) # w celu unikniecia dublowania outlierow z geom_point
+  geom_boxplot(outlier.color = "red") # w celu unikniecia dublowania outlierow z geom_point
 
 # wielowymiarowe i wielowarstwowe wykresy
 
@@ -107,6 +111,7 @@ ggplot(continents, aes(x = birth.rate, y = death.rate, size = population, label 
   geom_text(vjust = -1, size = 5)
 
 # wiele uzytecznych geometrii mozna znalezc w pakietach rzoszerzajacych ggplot2
+install.packages("ggrepel")
 library(ggrepel)
 ggplot(continents, aes(x = birth.rate, y = death.rate, size = population, label = continent)) +
   geom_point() +
@@ -129,6 +134,7 @@ ggplot(continents, aes(x = birth.rate, y = death.rate, size = population,
 # na jednym rysunku mozna przedstawic dane z wiecej niz jednego zrodla
 
 library(ggbeeswarm)
+install.packages("ggbeeswarm")
 ggplot(data = countries, aes(x = continent, y = death.rate)) +
   geom_quasirandom(method = "smiley")
 
@@ -212,6 +218,19 @@ mieszkania <- read.csv(file = "https://raw.githubusercontent.com/STWUR/STWUR-201
 # poszczegolnych dzielnic.
 # II. Przedstaw zaleznosc ceny za metr^2 od dzielnicy, pietra i roku zbudowania mieszkania.
 
+# ad. I
+mutated_mieszkania = mieszkania %>% 
+  mutate(cena = cena_m2 * metraz, wiek = 2019-rok) %>% 
+  filter(dzielnica != "Brak") %>% 
+  na.omit
+
+ggplot(data = mutated_mieszkania, aes(x = wiek, y = cena)) + 
+  stat_density_2d(aes(alpha = ..level..), color = "black", contour = TRUE, geom = "polygon") +
+  facet_wrap(~ dzielnica)
+
+ggplot(data = mutated_mieszkania, aes(x = cena, y = wiek)) + 
+  stat_density_2d(aes(alpha = ..level..), color = "black", contour = TRUE, geom = "polygon")
+
 # ad. II
 mieszkania_pietro <- mutate(mieszkania, 
                             pietro_disc = cut(pietro, breaks = c(0, 1, 2, 3, 5, 16), include.lowest = TRUE))
@@ -223,3 +242,4 @@ ggplot(mieszkania_pietro, aes(x = rok, y = cena_m2)) +
 ggplot(mieszkania_pietro, aes(x = rok, y = cena_m2)) +
   stat_density2d(aes(alpha = ..level..), color = "black", contour = TRUE, geom = "polygon") +
   facet_wrap(~ dzielnica + pietro_disc)
+
